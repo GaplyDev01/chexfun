@@ -7,13 +7,14 @@ import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
 
 interface Game {
   id: string;
-  white_player: string;
-  black_player: string;
-  black_player_id: string;
+  white_player: string | null;
+  white_player_id: string | null;
+  black_player: string | null;
+  black_player_id: string | null;
   fen: string;
   status: string;
   wager: number;
-  white_player_rating: number;
+  white_player_rating: number | null;
 }
 
 export default function Lobby() {
