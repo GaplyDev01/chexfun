@@ -4,6 +4,14 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../core/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
+import {
+  TelegramShareButton,
+  TelegramIcon,
+  EmailShareButton,
+  EmailIcon,
+  TwitterShareButton,
+  XIcon,
+} from "react-share";
 
 interface Game {
   id: string;
@@ -177,7 +185,30 @@ export default function Lobby() {
           </button>
         </div>
         {createdGameId && !creating && !error && (
-          <div style={{color: 'var(--accent-2)', marginBottom: '1em'}}>Game created! If you are not redirected, <a href={`/chessboard?gameId=${createdGameId}`}>click here</a>.</div>
+          <>
+            <div style={{color: 'var(--accent-2)', marginBottom: '1em'}}>Game created! If you are not redirected, <a href={`/chessboard?gameId=${createdGameId}`}>click here</a>.</div>
+            <div style={{marginBottom: '1em', textAlign: 'center'}}>
+              <div style={{marginBottom: 8, fontWeight: 500}}>Invite a friend to join your game:</div>
+              <div style={{display: 'flex', gap: 12, justifyContent: 'center'}}>
+                <TelegramShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"Join my chess game!"}>
+                  <TelegramIcon size={36} round />
+                </TelegramShareButton>
+                <TwitterShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"Join my chess game!"}>
+                  <XIcon size={36} round />
+                </TwitterShareButton>
+                <EmailShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} subject="Join my chess game!" body="Let's play chess! Use this link to join: ">
+                  <EmailIcon size={36} round />
+                </EmailShareButton>
+                <button style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}} onClick={() => {
+                  const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`;
+                  navigator.clipboard.writeText(url);
+                  alert('Game link copied! Share it anywhere, including Discord.');
+                }} title="Copy link for Discord or anywhere">
+                  <img src="https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/discord.svg" alt="Discord" width={36} height={36} style={{borderRadius: '50%'}} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
         {loading && <div style={{color: 'var(--accent)'}}>Loading...</div>}
         {error && <div className="error" style={{marginBottom: '1em'}}>{error}</div>}
