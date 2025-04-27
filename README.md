@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## pawnsfun
+
+## Environment Variables Required
+
+You must set the following environment variables for both local development and production deployment:
+
+- `NEXT_PUBLIC_SUPABASE_URL` — Your Supabase project URL (e.g. https://ospgpgpahqgalaufcomo.supabase.co)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Your Supabase anon public key
+
+These must be set in both `.env` and `.env.local` files at the root of the project. Without these, the app will fail to connect to Supabase and builds will fail on deployment.
+
+Example `.env`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://ospgpgpahqgalaufcomo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zcGdwZ3BhaHFnYWxhdWZjb21vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NzYzMzIsImV4cCI6MjA2MTE1MjMzMn0.houQzJX0k4S9MbnPODy13rK8oIXq-QwuuRxD9lOjE9s
+```
+
 ## Getting Started
 
 First, run the development server:
