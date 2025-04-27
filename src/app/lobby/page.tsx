@@ -12,6 +12,7 @@ import {
   TwitterShareButton,
   XIcon,
 } from "react-share";
+import { Analytics } from "@vercel/analytics/react";
 
 interface Game {
   id: string;
@@ -236,6 +237,7 @@ export default function Lobby() {
           ))}
         </ul>
       </div>
+      <Analytics />
     </section>
   );
 }

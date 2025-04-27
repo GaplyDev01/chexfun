@@ -9,12 +9,13 @@ interface StreamerOverlayProps {
   status: string;
 }
 
+export function formatTime(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 export default function StreamerOverlay({ fen, whiteName, blackName, whiteTime, blackTime, status }: StreamerOverlayProps) {
-  function formatTime(sec: number) {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  }
   return (
     <div className="bg-black bg-opacity-60 rounded-lg p-4 flex flex-col items-center w-fit">
       <div className="flex justify-between w-full mb-2">
@@ -33,3 +34,4 @@ export default function StreamerOverlay({ fen, whiteName, blackName, whiteTime, 
     </div>
   );
 }
+

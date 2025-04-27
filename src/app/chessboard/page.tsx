@@ -55,10 +55,14 @@ export default function ChessGameBoard() {
         return;
       }
       const chess = new Chess();
+      console.log('[DEBUG] Replaying moves:', moves);
       for (const m of moves || []) {
-        chess.move(m.move);
+        const beforeFen = chess.fen();
+        const moveResult = chess.move(m.move);
+        console.log(`[DEBUG] Move: ${m.move}, FEN before: ${beforeFen}, FEN after: ${chess.fen()}, Move result:`, moveResult);
       }
       setGame(chess);
+      console.log('[DEBUG] Final FEN after replay:', chess.fen());
     }
     async function fetchPlayers() {
       const { data: games, error: gameError } = await supabase
@@ -70,6 +74,7 @@ export default function ChessGameBoard() {
         setBlackPlayer(games.black_player || null);
         setGameStatus(games.status);
         // Ready state logic
+        console.log('[DEBUG] fetchPlayers:', games);
         if (address && games.white_player === address) {
           setReady(!!games.ready_white);
           setOpponentReady(!!games.ready_black);
@@ -128,6 +133,11 @@ export default function ChessGameBoard() {
         // Fetch both player addresses (assume white_player/black_player filled)
         const { data: gameData } = await supabase.from('games').select('white_player,black_player,white_player_id,black_player_id').eq('id', gameId).single();
         if (!gameData) return;
+        console.log('[DEBUG] assignColors - gameData:', gameData, 'address:', address, 'myColor:', myColor);
+        // Check if both players are being set to white
+        if (address === gameData.white_player && myColor === 'w') {
+          console.warn('[DEBUG] Attempting to set both players to white:', { address, gameData });
+        }
         const update = {
           white_player: myColor === 'w' ? address : gameData.black_player,
           black_player: myColor === 'b' ? address : gameData.white_player,
@@ -136,6 +146,7 @@ export default function ChessGameBoard() {
           status: 'ready',
           assigned: true
         };
+        console.log('[DEBUG] assignColors - update:', update);
         await supabase.from('games').update(update).eq('id', gameId);
         setAssignedColor(myColor);
       };
@@ -165,7 +176,9 @@ export default function ChessGameBoard() {
   async function makeAMove(move: { from: string; to: string; promotion?: string }) {
     if (gameStatus !== 'active') return;
     const gameCopy = new Chess(game.fen());
+    console.log('[DEBUG] makeAMove - FEN before move:', game.fen(), 'Move:', move);
     const result = gameCopy.move(move);
+    console.log('[DEBUG] makeAMove - FEN after move:', gameCopy.fen(), 'Move result:', result);
     // Detect capture
     if (result && result.captured) {
       setLastCaptured({ piece: result.captured, color: result.color === 'w' ? 'b' : 'w' });

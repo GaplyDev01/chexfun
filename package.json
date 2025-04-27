@@ -13,6 +13,7 @@
     "@abstract-foundation/agw-react": "^1.6.4",
     "@netlify/next": "^1.4.9",
     "@supabase/supabase-js": "^2.49.4",
+    "@vercel/analytics": "^1.5.0",
     "chess.js": "^1.2.0",
     "chessboardjsx": "^2.4.7",
     "ethers": "^6.13.5",

@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   description: "You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
   openGraph: {
     title: "Pawns.fun | Challenge Chess",
-    description: "You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
+    description: "You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
+        alt: "You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
       },
     ],
     type: "website",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Pawns.fun | Challenge Chess",
-    description: "You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
+    description: "You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun",
     images: ["/og-image.png"],
   },
 };
@@ -51,12 +51,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#0d1117" />
         <meta property="og:title" content="Pawns.fun | Challenge Chess" />
-        <meta property="og:description" content="You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun" />
+        <meta property="og:description" content="You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun" />
         <meta property="og:image" content="/og-image.png" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Pawns.fun | Challenge Chess" />
-        <meta name="twitter:description" content="You up for a chellenge or are yo a pawn? Put your skills to the test, new on Abstract. Pawns.fun" />
+        <meta name="twitter:description" content="You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun" />
         <meta name="twitter:image" content="/og-image.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
