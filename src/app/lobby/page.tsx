@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../core/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
@@ -19,6 +20,7 @@ import { useGames } from "../core/hooks/useGames";
 import { User, Game } from "../core/types";
 
 export default function Lobby() {
+  const router = useRouter();
   const [wager, setWager] = useState<number>(0.01);
   const [minRating, setMinRating] = useState<number>(0);
   const [maxRating, setMaxRating] = useState<number>(3000);
