@@ -67,14 +67,14 @@ export default function Lobby() {
       const o = obj as Record<string, unknown>;
       return (
         typeof o.id === 'string' &&
-        typeof o.white_player === 'string' &&
-        typeof o.black_player === 'string' &&
+        (typeof o.white_player === 'string' || o.white_player === null) &&
+        (typeof o.black_player === 'string' || o.black_player === null) &&
+        (typeof o.white_player_id === 'string' || o.white_player_id === null) &&
+        (typeof o.black_player_id === 'string' || o.black_player_id === null) &&
         typeof o.fen === 'string' &&
         typeof o.status === 'string' &&
         typeof o.wager === 'number' &&
-        typeof o.white_player_id === 'string' &&
-        typeof o.black_player_id === 'string' &&
-        typeof o.white_player_rating === 'number'
+        (typeof o.white_player_rating === 'number' || o.white_player_rating === null)
       );
     }
     const sub = supabase
