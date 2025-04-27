@@ -191,10 +191,10 @@ export default function Lobby() {
             <div style={{marginBottom: '1em', textAlign: 'center'}}>
               <div style={{marginBottom: 8, fontWeight: 500}}>Invite a friend to join your game:</div>
               <div style={{display: 'flex', gap: 12, justifyContent: 'center'}}>
-                <TelegramShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"Join my chess game!"}>
+                <TelegramShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun"}>
                   <TelegramIcon size={36} round />
                 </TelegramShareButton>
-                <TwitterShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"Join my chess game!"}>
+                <TwitterShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} title={"You up for a challenge or are you a pawn? Put your skills to the test, new on Abstract. Pawns.fun"}>
                   <XIcon size={36} round />
                 </TwitterShareButton>
                 <EmailShareButton url={`${typeof window !== 'undefined' ? window.location.origin : ''}/chessboard?gameId=${createdGameId}`} subject="Join my chess game!" body="Let's play chess! Use this link to join: ">
