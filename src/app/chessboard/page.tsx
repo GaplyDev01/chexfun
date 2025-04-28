@@ -28,16 +28,8 @@ function isOverlayMode() {
   return params.get("overlay") === "1";
 }
 
-// Handler for chessboard piece drop
-function onDrop(sourceSquare: string, targetSquare: string) {
-  // Only allow moves when game is active and not in countdown
-  if (typeof window === 'undefined') return false;
-  // @ts-ignore: gameStatus/countdown are stateful, closure is fine
-  if (window.__disableChessMove) return false;
-  // Use stateful gameStatus/countdown via closure
-  // We'll rebind this in the component below
-  return false;
-}
+
+
 
 export default function ChessGameBoard() {
   const [ready, setReady] = useState(false);
@@ -54,7 +46,7 @@ export default function ChessGameBoard() {
   const [blackTime] = useState(5 * 60);
   const [activeColor, setActiveColor] = useState<'w' | 'b'>('w');
   const [gameStatus, setGameStatus] = useState<string>('active');
-  const [infoBanner, setInfoBanner] = useState<string | null>(null);
+  const [infoBanner] = useState<string | null>(null);
   const [blackPlayer, setBlackPlayer] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [redirecting, setRedirecting] = useState(false);
@@ -262,15 +254,6 @@ export default function ChessGameBoard() {
       }
     }
     return result;
-  }
-
-  function onDrop(sourceSquare: string, targetSquare: string) {
-    if (gameStatus !== 'active' || countdown) return false;
-    const chess = new Chess(game.fen());
-    const move = chess.move({ from: sourceSquare, to: targetSquare, promotion: "q" });
-    if (!move) return false; // illegal move
-    makeAMove({ from: sourceSquare, to: targetSquare, promotion: "q" });
-    return true;
   }
 
   // Handle timeout

@@ -39,27 +39,33 @@ export default function Lobby() {
   useEffect(() => {
     async function fetchUser() {
       if (!address) return;
-      const { data: user } = await supabase
+      const { data, error } = await supabase
         .from("users")
         .select("id, wallet_address, rating, wins, losses, total_pnl, total_wagered, created_at, last_seen")
         .eq("wallet_address", address)
         .single();
-      if (!user) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (!data) {
         // Create user if not exists
         const { data: newUser } = await supabase
           .from("users")
           .insert({ wallet_address: address })
           .select()
           .single();
-        setUser(newUser);
+        if (newUser) {
+          setUser(newUser);
+        }
       } else {
-        setUser(user);
+        setUser(data);
       }
     }
     fetchUser();
   }, [address]);
 
-  async function createGame() {
+  async function createGame(): Promise<void> {
     if (!user) return;
     const id = uuidv4();
     // On-chain escrow contract call
