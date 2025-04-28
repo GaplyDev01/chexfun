@@ -13,6 +13,7 @@
     "@abstract-foundation/agw-react": "^1.6.4",
     "@netlify/next": "^1.4.9",
     "@supabase/supabase-js": "^2.49.4",
+    "@thirdweb-dev/react": "^4.9.4",
     "@vercel/analytics": "^1.5.0",
     "chess.js": "^1.2.0",
     "chessboardjsx": "^2.4.7",
@@ -21,6 +22,7 @@
     "react-dom": "^19.0.0",
     "react-share": "^5.2.2",
     "socket.io-client": "^4.8.1",
+    "thirdweb": "^5.96.4",
     "uuid": "^11.1.0",
     "viem": "^2.28.0",
     "zksync-ethers": "^6.17.0"

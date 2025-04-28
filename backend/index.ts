@@ -1,9 +1,23 @@
 import { ethers } from "ethers";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
-import abi from "../contracts/artifacts-zk/contracts/ChessWagerEscrow.sol/ChessWagerEscrow.json" assert { type: "json" };
+import fs from "fs";
+import express from "express";
+import bridgeRoutes from "./bridgeRoutes";
+
+function logToFile(msg: string) {
+  const logPath = "backend.log";
+  const line = `[${new Date().toISOString()}] ${msg}\n`;
+  try {
+    fs.appendFileSync(logPath, line);
+  } catch {}
+}
 
 dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(bridgeRoutes);
 
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const contractAddress = process.env.CONTRACT_ADDRESS!;
@@ -51,26 +65,36 @@ async function pollEvents() {
             }
           ], { onConflict: "id" });
           console.log(`[backend] GameCreated indexed: ${gameId}`);
+          logToFile(`GameCreated indexed: ${gameId}`);
         } else if (eventName === "GameJoined") {
           const [gameId, player2] = parsed.args;
           await supabase.from("games").update({ black_player: player2, status: "active" }).eq("id", gameId.toString());
           console.log(`[backend] GameJoined indexed: ${gameId}`);
+          logToFile(`GameJoined indexed: ${gameId}`);
         } else if (eventName === "DisputeRaised") {
           const [gameId] = parsed.args;
           await supabase.from("games").update({ status: "dispute" }).eq("id", gameId.toString());
           console.log(`[backend] DisputeRaised indexed: ${gameId}`);
+          logToFile(`DisputeRaised indexed: ${gameId}`);
         } else if (eventName === "GameFinished") {
           const [gameId] = parsed.args;
           await supabase.from("games").update({ status: "finished" }).eq("id", gameId.toString());
           console.log(`[backend] GameFinished indexed: ${gameId}`);
+          logToFile(`GameFinished indexed: ${gameId}`);
         }
       }
     }
     lastBlock = currentBlock;
   } catch (err) {
     console.error("[backend] Polling error:", err);
+    logToFile(`Polling error: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
 console.log("[backend] ChessWagerEscrow log polling indexer started.");
 setInterval(pollEvents, 10000);
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`[bridge] Universal Bridge API proxy running on port ${PORT}`);
+});

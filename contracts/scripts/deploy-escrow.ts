@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Wallet, Provider, ContractFactory } from "zksync-web3";
 import * as fs from "fs";
 
