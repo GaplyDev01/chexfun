@@ -54,6 +54,7 @@ export default function ChessGameBoard() {
   const [blackTime] = useState(5 * 60);
   const [activeColor, setActiveColor] = useState<'w' | 'b'>('w');
   const [gameStatus, setGameStatus] = useState<string>('active');
+  const [infoBanner, setInfoBanner] = useState<string | null>(null);
   const [blackPlayer, setBlackPlayer] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [redirecting, setRedirecting] = useState(false);
@@ -296,8 +297,31 @@ export default function ChessGameBoard() {
   }
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', justifyContent: 'center'}}>
-      <div className="card" style={{padding: '2.5em 2em', background: 'var(--card-bg)', border: '1px solid var(--accent)', boxShadow: '0 0 24px #4f8cff33', width: 560, maxWidth: '98vw'}}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      minHeight: '100vh',
+      justifyContent: 'center',
+      width: '100vw',
+      background: 'var(--background)',
+    }}>
+
+      <div
+        className="card"
+        style={{
+          padding: '2.5em 2em',
+          background: 'var(--card-bg)',
+          border: '1px solid var(--accent)',
+          boxShadow: '0 0 24px #4f8cff33',
+          width: '100%',
+          maxWidth: 560,
+          minWidth: 0,
+          boxSizing: 'border-box',
+        }}
+        aria-label="Chess game area"
+        tabIndex={0}
+      >
         {lastCaptured && captureAnim && (
           <div style={{
             position: 'absolute',
@@ -421,11 +445,43 @@ export default function ChessGameBoard() {
           {moveError}
         </div>
       )}
+      {infoBanner && (
+        <div style={{
+          color: '#fff',
+          background: '#1976d2',
+          padding: '0.5em 1em',
+          borderRadius: 8,
+          marginBottom: 10,
+          fontWeight: 600,
+          boxShadow: '0 2px 8px #1976d255',
+          zIndex: 20,
+        }}>
+          {infoBanner}
+        </div>
+      )}
+      {infoBanner && (
+        <div style={{
+          color: '#fff',
+          background: '#1976d2',
+          padding: '0.5em 1em',
+          borderRadius: 8,
+          marginBottom: 10,
+          fontWeight: 600,
+          boxShadow: '0 2px 8px #1976d255',
+          zIndex: 20,
+        }}>
+          {infoBanner}
+        </div>
+      )}
       <div style={{marginBottom: 24}}>
         <Chessboard
           position={game.fen()}
           onPieceDrop={(source, target) => {
-            if (gameStatus !== 'active' || countdown) return false;
+            if (gameStatus !== 'active' || countdown) {
+              setMoveError('You cannot move: Game is not active.');
+              setTimeout(() => setMoveError(null), 1200);
+              return false;
+            }
             const chess = new Chess(game.fen());
             const move = chess.move({ from: source, to: target, promotion: "q" });
             if (!move) {
@@ -455,8 +511,26 @@ export default function ChessGameBoard() {
         />
       </div>
       <button
-        style={{marginBottom: 24, width: '100%', background: 'var(--accent)', color: '#fff', fontWeight: 700, padding: '0.75em', borderRadius: 8, border: 'none', fontSize: '1.1em', cursor: gameStatus === 'active' ? 'pointer' : 'not-allowed', opacity: gameStatus === 'active' ? 1 : 0.5}}
+        style={{
+          marginBottom: 24,
+          width: '100%',
+          background: 'var(--accent)',
+          color: '#fff',
+          fontWeight: 700,
+          padding: '0.75em',
+          borderRadius: 8,
+          border: 'none',
+          fontSize: '1.1em',
+          cursor: gameStatus === 'active' ? 'pointer' : 'not-allowed',
+          opacity: gameStatus === 'active' ? 1 : 0.5,
+          outline: '2px solid transparent',
+        }}
         disabled={gameStatus !== 'active'}
+        aria-label="Forfeit game"
+        tabIndex={0}
+        onFocus={e => e.currentTarget.style.outline = '2px solid #4f8cff'}
+        onBlur={e => e.currentTarget.style.outline = '2px solid transparent'}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click(); }}
         onClick={async () => {
           if (gameStatus !== 'active' || !gameId) return;
           await supabase.from('games').update({ status: 'forfeited' }).eq('id', gameId);
