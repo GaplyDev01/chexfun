@@ -22,7 +22,7 @@ function Avatar({ name }: { name: string | null | undefined }) {
   return <span style={{display:'inline-block',width:28,height:28,borderRadius:'50%',background:color,color:'#fff',textAlign:'center',lineHeight:'28px',fontWeight:600,marginRight:8}}>{initials}</span>;
 }
 
-const GameList: React.FC<GameListProps> = React.memo(({ games, onlineUsers, onJoin, onCreateGame, loading }) => {
+const GameList: React.FC<GameListProps> = React.memo(function GameList({ games, onlineUsers, onJoin, onCreateGame, loading }) {
   const [sort, setSort] = useState<'wager'|'rating'|'status'>('wager');
   const sortedGames = useMemo(() => {
     if (!games) return [];
@@ -43,7 +43,7 @@ const GameList: React.FC<GameListProps> = React.memo(({ games, onlineUsers, onJo
     <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
       <div style={{display:'flex',alignItems:'center',margin:'8px 0 16px 0'}}>
         <label htmlFor="sort-games" style={{marginRight:8}}>Sort by:</label>
-        <select id="sort-games" value={sort} onChange={e=>setSort(e.target.value as any)} style={{marginRight:16}} aria-label="Sort games">
+        <select id="sort-games" value={sort} onChange={e=>setSort(e.target.value as 'wager'|'rating'|'status')} style={{marginRight:16}} aria-label="Sort games">
           <option value="wager">Wager</option>
           <option value="rating">Rating</option>
           <option value="status">Status</option>
