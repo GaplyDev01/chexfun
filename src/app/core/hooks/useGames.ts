@@ -52,7 +52,7 @@ export function useGames(filters: { status?: string; minRating?: number; maxRati
       ]);
     }
 
-    function handleGameFinished(gameId: ethers.BigNumberish, result: number, winner: string) {
+    function handleGameFinished(gameId: ethers.BigNumberish) {
       setGames(prev => prev.map(g => g.id === gameId.toString() ? { ...g, status: "finished" } : g));
     }
 
@@ -66,7 +66,7 @@ export function useGames(filters: { status?: string; minRating?: number; maxRati
       await supabase.from("games").update({ black_player: player2, status: "active" }).eq("id", gameId.toString());
     }
 
-    async function handleDisputeRaised(gameId: ethers.BigNumberish, raiser: string) {
+    async function handleDisputeRaised(gameId: ethers.BigNumberish) {
       setGames(prev => prev.map(g => g.id === gameId.toString() ? { ...g, status: "dispute" } : g));
       // Persist to Supabase
       await supabase.from("games").update({ status: "dispute" }).eq("id", gameId.toString());
