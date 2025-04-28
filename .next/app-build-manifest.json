@@ -1,0 +1,74 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/app/_not-found/page-43902a1740ed5317.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/css/f88a04a4ed29e0bb.css",
+      "static/chunks/134-e53a72484ee47776.js",
+      "static/chunks/761-65f7098c8e8c8564.js",
+      "static/chunks/874-a73a5a2c10312336.js",
+      "static/chunks/app/layout-18beaa5cce57b16c.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/874-a73a5a2c10312336.js",
+      "static/chunks/app/page-e3deb769b139f3eb.js"
+    ],
+    "/bets/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/134-e53a72484ee47776.js",
+      "static/chunks/851-3d901827504033b7.js",
+      "static/chunks/app/bets/page-07e56cea7729fb0d.js"
+    ],
+    "/profile/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/134-e53a72484ee47776.js",
+      "static/chunks/761-65f7098c8e8c8564.js",
+      "static/chunks/851-3d901827504033b7.js",
+      "static/chunks/app/profile/page-fb994a89bfc93de4.js"
+    ],
+    "/chessboard/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/38170ce7-d29bcd5e327ef919.js",
+      "static/chunks/134-e53a72484ee47776.js",
+      "static/chunks/761-65f7098c8e8c8564.js",
+      "static/chunks/851-3d901827504033b7.js",
+      "static/chunks/219-cdd31a5d4983b475.js",
+      "static/chunks/912-a71541a3f05f95d0.js",
+      "static/chunks/app/chessboard/page-f457966a6d012338.js"
+    ],
+    "/lobby/page": [
+      "static/chunks/webpack-ac8a4ef4976dba5d.js",
+      "static/chunks/4bd1b696-ab45f6f0c74665f5.js",
+      "static/chunks/684-bb07de2c9bf7e8b9.js",
+      "static/chunks/main-app-14cf03bd974b00c3.js",
+      "static/chunks/134-e53a72484ee47776.js",
+      "static/chunks/761-65f7098c8e8c8564.js",
+      "static/chunks/851-3d901827504033b7.js",
+      "static/chunks/219-cdd31a5d4983b475.js",
+      "static/chunks/811-a14efbbf90009557.js",
+      "static/chunks/app/lobby/page-c4114148f60d2419.js"
+    ]
+  }
+}

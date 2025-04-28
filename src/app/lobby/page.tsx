@@ -15,15 +15,16 @@ import ErrorBanner from "../components/ErrorBanner";
 import LoadingSpinner from "../components/LoadingSpinner";
 import BotPlayButton from "../components/BotPlayButton";
 import { useGames } from "../core/hooks/useGames";
+import { Database } from "../core/database.types";
 
-import { User } from "../core/types";
+
 
 export default function Lobby() {
   const router = useRouter();
   const [wager, setWager] = useState<number>(0.01);
   const [minRating, setMinRating] = useState<number>(0);
   const [maxRating, setMaxRating] = useState<number>(3000);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Database['public']['Tables']['users']['Row'] | null>(null);
 
   const { address } = useGlobalWalletSignerAccount();
   const onlineUsers = usePresence(address ?? null);
@@ -31,8 +32,9 @@ export default function Lobby() {
 
   useEffect(() => {
     if (user) {
-      setMinRating(Math.max(0, user.rating - 200));
-      setMaxRating(user.rating + 200);
+      const rating = user.rating ?? 1200;
+      setMinRating(Math.max(0, rating - 200));
+      setMaxRating(rating + 200);
     }
   }, [user]);
 
@@ -40,7 +42,7 @@ export default function Lobby() {
     async function fetchUser() {
       if (!address) return;
       const { data, error } = await supabase
-        .from("users")
+        .from('users')
         .select("id, wallet_address, rating, wins, losses, total_pnl, total_wagered, created_at, last_seen")
         .eq("wallet_address", address)
         .single();
@@ -51,15 +53,15 @@ export default function Lobby() {
       if (!data) {
         // Create user if not exists
         const { data: newUser } = await supabase
-          .from("users")
+          .from('users')
           .insert({ wallet_address: address })
           .select()
           .single();
         if (newUser) {
-          setUser(newUser);
+          setUser(newUser as Database['public']['Tables']['users']['Row']);
         }
       } else {
-        setUser(data);
+        setUser(data as Database['public']['Tables']['users']['Row']);
       }
     }
     fetchUser();
@@ -69,7 +71,11 @@ export default function Lobby() {
     if (!user) return;
     const id = uuidv4();
     // On-chain escrow contract call
-    if (window.ethereum && address) {
+    function isEip1193Provider(obj: unknown): obj is { request: (...args: unknown[]) => Promise<unknown> } {
+  return typeof obj === 'object' && obj !== null && 'request' in obj && typeof (obj as { request?: unknown }).request === 'function';
+}
+
+if (isEip1193Provider(window.ethereum) && address) {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
@@ -85,7 +91,7 @@ export default function Lobby() {
         const gameId = event?.args?.gameId?.toString() ?? id;
         alert('On-chain game created! Game ID: ' + gameId);
         // Insert into Supabase for off-chain tracking
-        await supabase.from("games").insert([
+        await supabase.from('games').insert([
           {
             id: gameId,
             white_player: user.wallet_address,
@@ -105,7 +111,7 @@ export default function Lobby() {
       }
     }
     // Fallback: off-chain only
-    await supabase.from("games").insert([
+    await supabase.from('games').insert([
       {
         id,
         white_player: user.wallet_address,
@@ -159,7 +165,7 @@ export default function Lobby() {
         <BotPlayButton onPlay={async () => {
           if (!user) return;
           const id = uuidv4();
-          await supabase.from("games").insert([
+          await supabase.from('games').insert([
             {
               id,
               white_player: user.wallet_address,
@@ -190,7 +196,7 @@ export default function Lobby() {
                 return;
               }
               if (!game.black_player) {
-                await supabase.from("games").update({ black_player: `guest_${Math.floor(Math.random()*10000)}`, status: "active" }).eq("id", game.id);
+                await supabase.from('games').update({ black_player: `guest_${Math.floor(Math.random()*10000)}`, status: "active" }).eq("id", game.id);
                 router.push(`/chessboard?gameId=${game.id}`);
               }
             }}

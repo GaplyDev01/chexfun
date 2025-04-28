@@ -1,0 +1,9 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/bets/page": "/bets",
+  "/profile/page": "/profile",
+  "/chessboard/page": "/chessboard",
+  "/lobby/page": "/lobby"
+}

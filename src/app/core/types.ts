@@ -20,6 +20,6 @@ export interface Game {
   black_player_id: string | null;
   fen: string;
   status: string;
-  wager: number;
+  wager: number | null;
   white_player_rating: number | null;
 }

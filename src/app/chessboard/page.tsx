@@ -7,6 +7,10 @@ import { supabase } from "../core/supabaseClient";
 import { getEscrowContract } from "../core/escrow";
 import { ethers } from "ethers";
 
+function isEip1193Provider(obj: unknown): obj is { request: (...args: unknown[]) => Promise<unknown> } {
+  return typeof obj === 'object' && obj !== null && 'request' in obj && typeof (obj as { request?: unknown }).request === 'function';
+}
+
 declare global {
   interface Window {
     ethereum?: unknown;
@@ -75,7 +79,7 @@ export default function ChessGameBoard() {
       const { data: moves, error: movesError } = await supabase
         .from("moves")
         .select("move")
-        .eq("game_id", id)
+        .eq("game_id", id ?? "")
         .order("move_number", { ascending: true });
       if (movesError) {
         return;
@@ -94,7 +98,7 @@ export default function ChessGameBoard() {
       const { data: games, error: gameError } = await supabase
         .from("games")
         .select("black_player,status,white_player,white_player_id,black_player_id,ready_white,ready_black")
-        .eq("id", id)
+        .eq("id", id ?? "")
         .single();
       if (!gameError && games) {
         setBlackPlayer(games.black_player || null);
@@ -529,6 +533,7 @@ export default function ChessGameBoard() {
             onClick={async () => {
               if (!gameId || !window.ethereum) return;
               try {
+                if (!isEip1193Provider(window.ethereum)) throw new Error('No EIP-1193 provider');
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
                 const contract = getEscrowContract(signer);
@@ -551,6 +556,7 @@ export default function ChessGameBoard() {
             onClick={async () => {
               if (!gameId || !window.ethereum) return;
               try {
+                if (!isEip1193Provider(window.ethereum)) throw new Error('No EIP-1193 provider');
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
                 const contract = getEscrowContract(signer);

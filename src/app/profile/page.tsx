@@ -5,13 +5,13 @@ import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
 
 type User = {
   id: string;
-  wallet_address: string;
-  rating: number;
-  wins: number;
-  losses: number;
-  total_pnl: string;
-  total_wagered: string;
-  created_at: string;
+  wallet_address: string | null;
+  rating: number | null;
+  wins: number | null;
+  losses: number | null;
+  total_pnl: string | null;
+  total_wagered: string | null;
+  created_at: string | null;
 };
 
 export default function Profile() {
@@ -25,7 +25,7 @@ export default function Profile() {
       const { data: user } = await supabase
         .from("users")
         .select("*")
-        .eq("wallet_address", address)
+        .eq("wallet_address", address ?? "")
         .single();
       if (!user) {
         const { data: newUser } = await supabase

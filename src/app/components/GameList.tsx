@@ -29,7 +29,7 @@ const GameList: React.FC<GameListProps> = React.memo(function GameList({ games, 
     switch (sort) {
       case 'rating': return [...games].sort((a,b) => (b.white_player_rating||0) - (a.white_player_rating||0));
       case 'status': return [...games].sort((a,b) => a.status.localeCompare(b.status));
-      default: return [...games].sort((a,b) => b.wager - a.wager);
+      default: return [...games].sort((a,b) => (b.wager || 0) - (a.wager || 0));
     }
   }, [games, sort]);
   if (loading) return <li style={{textAlign:'center',padding:'2em 0'}} aria-busy="true">Loading games...</li>;

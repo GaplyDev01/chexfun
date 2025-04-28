@@ -6,11 +6,10 @@ import ErrorBanner from "../components/ErrorBanner";
 
 interface BetGame {
   id: string;
-  white_player: string;
-  black_player: string;
-  wager: number;
+  white_player: string | null;
+  black_player: string | null;
+  wager: number | null;
   status: string;
-  winner?: string;
 }
 
 export default function BetsPage() {
@@ -24,14 +23,19 @@ export default function BetsPage() {
       setError(null);
       const { data, error } = await supabase
         .from("games")
-        .select("id,white_player,black_player,wager,status,winner")
+        .select("id,white_player,black_player,wager,status")
         .order("wager", { ascending: false });
       if (error) {
         setError("Failed to load bets.");
         setLoading(false);
         return;
       }
-      setBets(data || []);
+      setBets((data || []).map((g) => ({
+  ...g,
+  white_player: g.white_player ?? "",
+  black_player: g.black_player ?? "",
+  wager: g.wager ?? 0,
+})));
       setLoading(false);
     }
     fetchBets();
@@ -50,18 +54,16 @@ export default function BetsPage() {
             <th style={{ padding: 8 }}>Black</th>
             <th style={{ padding: 8 }}>Wager (ETH)</th>
             <th style={{ padding: 8 }}>Status</th>
-            <th style={{ padding: 8 }}>Winner</th>
+            
           </tr>
         </thead>
         <tbody>
           {bets.map((bet) => (
             <tr key={bet.id} style={{ borderBottom: "1px solid #ddd" }}>
-              <td style={{ padding: 8, fontFamily: 'var(--font-mono)' }}>{bet.id.slice(0, 8)}...</td>
+              <td style={{ padding: 8, fontFamily: 'var(--font-mono)' }}>{bet.id?.slice(0, 8)}...</td>
               <td style={{ padding: 8 }}>{bet.white_player}</td>
               <td style={{ padding: 8 }}>{bet.black_player}</td>
-              <td style={{ padding: 8 }}>{bet.wager}</td>
               <td style={{ padding: 8 }}>{bet.status}</td>
-              <td style={{ padding: 8 }}>{bet.winner || '-'}</td>
             </tr>
           ))}
         </tbody>
