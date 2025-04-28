@@ -37,8 +37,13 @@ export default function Clock({ initialSeconds, isRunning, onTimeout, keyProp }:
 
   const min = Math.floor(seconds / 60);
   const sec = seconds % 60;
+  const isLow = seconds < 10;
   return (
-    <span className="font-mono text-lg">
+    <span
+      className="font-mono text-lg"
+      style={{ color: isLow ? 'var(--danger, red)' : undefined, fontWeight: isLow ? 'bold' : undefined }}
+      aria-live="polite"
+    >
       {min}:{sec.toString().padStart(2, "0")}
     </span>
   );
