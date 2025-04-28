@@ -44,6 +44,17 @@ export default function ChessGameBoard() {
     if (!id) {
       return;
     }
+    // Clean up game if user leaves before start and is the only player
+    const handleBeforeUnload = async () => {
+      if (gameStatus === 'waiting' && id && address && (!blackPlayer || blackPlayer === 'BOT')) {
+        await supabase.from('games').delete().eq('id', id);
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  
     // Fetch moves and reconstruct game
     async function fetchGame() {
       const { data: moves, error: movesError } = await supabase
@@ -316,6 +327,7 @@ export default function ChessGameBoard() {
                 if (!gameId) return;
                 setRedirecting(true);
                 await supabase.from('games').delete().eq('id', gameId);
+                window.removeEventListener('beforeunload', () => {});
                 window.location.href = '/lobby';
               }}
             >Leave Lobby</button>
