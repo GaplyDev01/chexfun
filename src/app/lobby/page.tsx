@@ -18,6 +18,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import GameList from "../components/GameList";
 import ErrorBanner from "../components/ErrorBanner";
 import LoadingSpinner from "../components/LoadingSpinner";
+import BotPlayButton from "../components/BotPlayButton";
 import { useGames } from "../core/hooks/useGames";
 
 import { User, Game } from "../core/types";
@@ -117,6 +118,24 @@ export default function Lobby() {
         {/* Game creation and sharing UI is now modular and handled elsewhere */}
         {loading && <LoadingSpinner label="Loading games..." />}
         <ErrorBanner message={error} />
+        <BotPlayButton onPlay={async () => {
+          if (!user) return;
+          const id = uuidv4();
+          await supabase.from("games").insert([
+            {
+              id,
+              white_player: user.wallet_address,
+              white_player_id: user.id,
+              black_player: "BOT",
+              black_player_id: "bot",
+              fen: "startpos",
+              status: "active",
+              wager: 0,
+              white_player_rating: user.rating
+            }
+          ]);
+          router.push(`/chessboard?gameId=${id}`);
+        }} />
         <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
           <GameList
             games={games}

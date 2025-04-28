@@ -198,6 +198,34 @@ export default function ChessGameBoard() {
       ]);
       // Switch active color and clock
       setActiveColor(gameCopy.turn() as 'w' | 'b');
+
+      // BOT LOGIC: if black_player is BOT and it's now black's turn, make bot move
+      if (
+        blackPlayer === 'BOT' &&
+        gameCopy.turn() === 'b' &&
+        gameStatus === 'active'
+      ) {
+        setTimeout(async () => {
+          const botGame = new Chess(gameCopy.fen());
+          const legalMoves = botGame.moves();
+          if (legalMoves.length) {
+            // Pick a random move
+            const botMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+            botGame.move(botMove);
+            // Insert bot move into Supabase
+            const botMoveCount = botGame.history().length;
+            await supabase.from("moves").insert([
+              {
+                game_id: gameId,
+                move_number: botMoveCount,
+                move: botMove,
+              },
+            ]);
+            setGame(botGame);
+            setActiveColor(botGame.turn() as 'w' | 'b');
+          }
+        }, 650); // Delay for realism
+      }
     }
     return result;
   }

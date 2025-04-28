@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Game } from "../core/types";
 
 interface GameListProps {
@@ -8,8 +8,6 @@ interface GameListProps {
   onCreateGame?: () => void;
   loading?: boolean;
 }
-
-import React, { useState, useMemo } from "react";
 
 const AVATAR_COLORS = ["#4f8cff","#a259ff","#f24e1e","#43b97f","#fbbc05","#ff6d00"];
 function getInitials(name: string | null | undefined) {
@@ -74,18 +72,3 @@ const GameList: React.FC<GameListProps> = React.memo(({ games, onlineUsers, onJo
 });
 
 export default GameList;
-            <br />
-            <span style={{color: 'var(--foreground)', fontSize: '0.95em'}}>White: <b>{game.white_player}</b> {game.white_player && onlineUsers.includes(game.white_player) ? '🟢' : '⚪'} {game.black_player ? `vs ${game.black_player}` : ''} {game.black_player ? (onlineUsers.includes(game.black_player) ? '🟢' : '⚪') : ''}</span>
-          </div>
-          <button
-            style={{background: 'var(--accent-2)', color: '#0d1117', minWidth: 100}}
-            onClick={() => onJoin(game)}
-            disabled={!!game.black_player}
-            aria-label={game.black_player ? 'Game already joined' : 'Join this game'}
-            title={game.black_player ? 'This game already has two players.' : 'Join this game'}
-          >Join</button>
-        </li>
-      ))}
-    </>
-  );
-}
