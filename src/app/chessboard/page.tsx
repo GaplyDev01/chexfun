@@ -4,6 +4,15 @@ import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { supabase } from "../core/supabaseClient";
+import { getEscrowContract } from "../core/escrow";
+import { ethers } from "ethers";
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 import Clock from "../components/Clock";
 import StreamerOverlay from "../components/StreamerOverlay";
 
@@ -19,6 +28,17 @@ function isOverlayMode() {
   return params.get("overlay") === "1";
 }
 
+// Handler for chessboard piece drop
+function onDrop(sourceSquare: string, targetSquare: string) {
+  // Only allow moves when game is active and not in countdown
+  if (typeof window === 'undefined') return false;
+  // @ts-ignore: gameStatus/countdown are stateful, closure is fine
+  if (window.__disableChessMove) return false;
+  // Use stateful gameStatus/countdown via closure
+  // We'll rebind this in the component below
+  return false;
+}
+
 export default function ChessGameBoard() {
   const [ready, setReady] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
@@ -28,6 +48,8 @@ export default function ChessGameBoard() {
   const { address, status } = useGlobalWalletSignerAccount();
   const [game, setGame] = useState(new Chess());
   const [gameId, setGameId] = useState<string | null>(null);
+  const [lastMoveSquares, setLastMoveSquares] = useState<{from: string, to: string} | null>(null);
+  const [moveError, setMoveError] = useState<string | null>(null);
   const [whiteTime] = useState(5 * 60);
   const [blackTime] = useState(5 * 60);
   const [activeColor, setActiveColor] = useState<'w' | 'b'>('w');
@@ -270,7 +292,7 @@ export default function ChessGameBoard() {
           status={gameStatus}
         />
       </div>
-    );
+       );
   }
 
   return (
@@ -293,19 +315,19 @@ export default function ChessGameBoard() {
             opacity: captureAnim ? 1 : 0,
             transition: 'opacity 0.5s',
             pointerEvents: 'none',
-            color: lastCaptured.color === 'w' ? '#fff' : '#222',
+            color: lastCaptured?.color === 'w' ? '#fff' : '#222',
             textShadow: '0 2px 8px #000',
           }}>
             {(() => {
               const pieceMap: Record<string, string> = {
-                p: lastCaptured.color === 'w' ? '♙' : '♟',
-                n: lastCaptured.color === 'w' ? '♘' : '♞',
-                b: lastCaptured.color === 'w' ? '♗' : '♝',
-                r: lastCaptured.color === 'w' ? '♖' : '♜',
-                q: lastCaptured.color === 'w' ? '♕' : '♛',
-                k: lastCaptured.color === 'w' ? '♔' : '♚',
+                p: lastCaptured?.color === 'w' ? '♙' : '♟',
+                n: lastCaptured?.color === 'w' ? '♘' : '♞',
+                b: lastCaptured?.color === 'w' ? '♗' : '♝',
+                r: lastCaptured?.color === 'w' ? '♖' : '♜',
+                q: lastCaptured?.color === 'w' ? '♕' : '♛',
+                k: lastCaptured?.color === 'w' ? '♔' : '♚',
               };
-              return pieceMap[lastCaptured.piece] || '?';
+              return pieceMap[lastCaptured?.piece ?? ''] || '?';
             })()}
           </div>
         )}
@@ -354,14 +376,14 @@ export default function ChessGameBoard() {
             Both players are ready! Assigning colors and starting soon...
           </div>
         )}
-        {countdown && countdown > 0 && (
+        {typeof countdown === 'number' && countdown > 0 && (
           <div style={{marginBottom: '1em', color: 'var(--accent)', fontWeight: 600, textAlign: 'center'}}>
             Opponent joined! Game starting in {countdown} second{countdown !== 1 ? 's' : ''}...
           </div>
         )}
         {status === "connected" && address && (
           <div style={{color: 'var(--accent-2)', fontFamily: 'var(--font-mono)', fontSize: '1.1em', marginBottom: '1em'}}>
-            Your Address: {address.slice(0, 6)}...{address.slice(-4)}
+            Your Address: {address?.slice(0, 6) ?? ''}...{address?.slice(-4) ?? ''}
           </div>
         )}
       </div>
@@ -385,13 +407,51 @@ export default function ChessGameBoard() {
           />
         </div>
       </div>
+      {moveError && (
+        <div style={{
+          color: '#fff',
+          background: '#ff4d4f',
+          padding: '0.5em 1em',
+          borderRadius: 8,
+          marginBottom: 10,
+          fontWeight: 600,
+          boxShadow: '0 2px 8px #ff4d4f55',
+          zIndex: 20,
+        }}>
+          {moveError}
+        </div>
+      )}
       <div style={{marginBottom: 24}}>
         <Chessboard
           position={game.fen()}
-          onPieceDrop={onDrop}
+          onPieceDrop={(source, target) => {
+            if (gameStatus !== 'active' || countdown) return false;
+            const chess = new Chess(game.fen());
+            const move = chess.move({ from: source, to: target, promotion: "q" });
+            if (!move) {
+              setMoveError('Illegal move!');
+              setTimeout(() => setMoveError(null), 1200);
+              return false;
+            }
+            setLastMoveSquares({ from: source, to: target });
+            makeAMove({ from: source, to: target, promotion: "q" });
+            return true;
+          }}
           boardWidth={480}
           arePiecesDraggable={gameStatus === 'active' && !countdown && !!blackPlayer}
-          customBoardStyle={{ borderRadius: 12, boxShadow: '0 0 24px #4f8cff33' }}
+          customBoardStyle={{ borderRadius: 12, boxShadow: '0 0 24px #4f8cff33', transition: 'box-shadow 0.3s' }}
+          animationDuration={250}
+          boardOrientation={assignedColor === 'b' ? 'black' : 'white'}
+          showBoardNotation={true}
+          customSquareStyles={lastMoveSquares ? {
+            [lastMoveSquares.from]: {
+              background: 'radial-gradient(circle, #ffe082 70%, transparent 100%)',
+            },
+            [lastMoveSquares.to]: {
+              background: 'radial-gradient(circle, #81d4fa 70%, transparent 100%)',
+            },
+          } : {}}
+
         />
       </div>
       <button
@@ -403,7 +463,61 @@ export default function ChessGameBoard() {
           setGameStatus('forfeited');
         }}
       >Forfeit</button>
-      <div style={{color: 'var(--foreground)', fontWeight: 600, textAlign: 'center'}}>
+
+      {/* On-chain result reporting */}
+      {gameStatus === 'active' && (
+        <div style={{marginBottom: 16, marginTop: 8, textAlign: 'center'}}>
+          <button
+            style={{background: '#4caf50', color: '#fff', fontWeight: 700, padding: '0.5em 1.5em', borderRadius: 8, border: 'none', fontSize: '1em', marginRight: 10}}
+            onClick={async () => {
+              if (!gameId || !window.ethereum) return;
+              try {
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const contract = getEscrowContract(signer);
+                // 1 = Player1Win, 2 = Player2Win, 3 = Draw
+                // TODO: Determine winner based on chess.js state and address
+                // For demo: prompt user
+                const result = window.prompt('Enter result: 1=You win, 2=Opponent wins, 3=Draw');
+                if (!result) return;
+                const tx = await contract.reportResult(Number(gameId), Number(result));
+                await tx.wait();
+                alert('Result reported on-chain!');
+
+              } catch (err) {
+                alert('Failed to report result on-chain: ' + (err as Error).message);
+              }
+            }}
+          >Report Result (On-chain)</button>
+          <button
+            style={{background: '#ff9800', color: '#fff', fontWeight: 700, padding: '0.5em 1.5em', borderRadius: 8, border: 'none', fontSize: '1em'}}
+            onClick={async () => {
+              if (!gameId || !window.ethereum) return;
+              try {
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const contract = getEscrowContract(signer);
+                const tx = await contract.raiseDispute(Number(gameId));
+                await tx.wait();
+                alert('Dispute raised on-chain!');
+
+              } catch (err) {
+                alert('Failed to raise dispute: ' + (err as Error).message);
+              }
+            }}
+          >Raise Dispute (On-chain)</button>
+        </div>
+      )}
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground)', fontWeight: 600, textAlign: 'center', marginBottom: 6}}>
+        <span style={{
+          display: 'inline-block',
+          width: 14,
+          height: 14,
+          borderRadius: '50%',
+          background: activeColor === 'w' ? '#fff' : '#222',
+          border: '2px solid #4f8cff',
+          marginRight: 8,
+        }}></span>
         {gameStatus === 'active' ? (activeColor === 'w' ? 'White' : 'Black') + " to move" : `Game status: ${gameStatus}`}
       </div>
     </div>

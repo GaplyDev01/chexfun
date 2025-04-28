@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../core/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
+import { getEscrowContract } from "../core/escrow";
+import { ethers } from "ethers";
 import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
 import { usePresence } from "../core/hooks/usePresence";
 
@@ -60,6 +62,43 @@ export default function Lobby() {
   async function createGame() {
     if (!user) return;
     const id = uuidv4();
+    // On-chain escrow contract call
+    if (window.ethereum && address) {
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = getEscrowContract(signer);
+        // Prompt for opponent address (for demo, user must enter)
+        const opponent = window.prompt('Enter opponent wallet address for escrow game:');
+        if (!opponent) return;
+        const wagerWei = ethers.parseEther(wager.toString());
+        const tx = await contract.createGame(opponent, { value: wagerWei });
+        const receipt = await tx.wait();
+        // Find GameCreated event
+        const event = receipt.logs?.find((log: any) => log.eventName === "GameCreated");
+        const gameId = event?.args?.gameId?.toString() ?? id;
+        alert('On-chain game created! Game ID: ' + gameId);
+        // Insert into Supabase for off-chain tracking
+        await supabase.from("games").insert([
+          {
+            id: gameId,
+            white_player: user.wallet_address,
+            white_player_id: user.id,
+            black_player: opponent,
+            black_player_id: null,
+            fen: "startpos",
+            status: "waiting",
+            wager: wager,
+            white_player_rating: user.rating
+          }
+        ]);
+        router.push(`/chessboard?gameId=${gameId}`);
+        return;
+      } catch (err) {
+        alert('Failed to create on-chain game: ' + (err as Error).message);
+      }
+    }
+    // Fallback: off-chain only
     await supabase.from("games").insert([
       {
         id,
