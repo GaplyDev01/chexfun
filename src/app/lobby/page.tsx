@@ -81,7 +81,7 @@ export default function Lobby() {
         const tx = await contract.createGame(opponent, { value: wagerWei });
         const receipt = await tx.wait();
         // Find GameCreated event
-        const event = receipt.logs?.find((log: any) => log.eventName === "GameCreated");
+        const event = receipt.logs?.find((log: unknown) => (log as { eventName?: string }).eventName === "GameCreated");
         const gameId = event?.args?.gameId?.toString() ?? id;
         alert('On-chain game created! Game ID: ' + gameId);
         // Insert into Supabase for off-chain tracking

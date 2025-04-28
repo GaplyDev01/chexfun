@@ -9,7 +9,7 @@ import { ethers } from "ethers";
 
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: unknown;
   }
 }
 
@@ -147,7 +147,7 @@ export default function ChessGameBoard() {
       })
       .subscribe();
     return () => { supabase.removeChannel(sub); supabase.removeChannel(subGame); };
-  }, [address]);
+  }, [address, blackPlayer, gameStatus]);
 
   // Ready logic and color assignment
   useEffect(() => {
