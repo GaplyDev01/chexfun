@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MIT
+// Force recompile: 2025-04-28
+// Trigger artifact generation
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -156,6 +158,7 @@ contract ChessWagerEscrow is ReentrancyGuard, Ownable {
         Game storage game = games[gameId];
         require(game.status != GameStatus.Ongoing, "Game still active");
         uint256 total = address(this).balance;
-        payable(owner()).transfer(total);
+        (bool sent, ) = payable(owner()).call{value: total}("");
+        require(sent, "Failed to send Ether");
     }
 }

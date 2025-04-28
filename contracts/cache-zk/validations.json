@@ -1,0 +1,432 @@
+{
+  "version": "3.4",
+  "log": [
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "Ownable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard": {
+        "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:25",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ReentrancyGuard",
+            "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:47"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ReentrancyGuard",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/ChessWagerEscrow.sol:ChessWagerEscrow": {
+        "src": "contracts\\ChessWagerEscrow.sol:9",
+        "version": {
+          "withMetadata": "ca40844ea6387f7491dd65e65185c5a60ad4a0cb969c6855b75fc35ff68634f0",
+          "withoutMetadata": "ca40844ea6387f7491dd65e65185c5a60ad4a0cb969c6855b75fc35ff68634f0",
+          "linkedWithoutMetadata": "ca40844ea6387f7491dd65e65185c5a60ad4a0cb969c6855b75fc35ff68634f0"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address,address)",
+          "createGame(address)",
+          "joinGame(uint256)",
+          "reportResult(uint256,uint8)",
+          "raiseDispute(uint256)",
+          "resolveDispute(uint256,uint8)",
+          "claimTimeout(uint256)",
+          "refundUnjoinedGame(uint256)",
+          "updateArbitrator(address)",
+          "emergencyWithdraw(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ChessWagerEscrow",
+            "src": "contracts\\ChessWagerEscrow.sol:45"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "gameIdCounter",
+              "type": "t_uint256",
+              "src": "contracts\\ChessWagerEscrow.sol:25"
+            },
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "arbitrator",
+              "type": "t_address",
+              "src": "contracts\\ChessWagerEscrow.sol:26"
+            },
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "games",
+              "type": "t_mapping(t_uint256,t_struct(Game)283_storage)",
+              "src": "contracts\\ChessWagerEscrow.sol:27"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_uint256,t_struct(Game)283_storage)": {
+              "label": "mapping(uint256 => struct ChessWagerEscrow.Game)"
+            },
+            "t_struct(Game)283_storage": {
+              "label": "struct ChessWagerEscrow.Game",
+              "members": [
+                {
+                  "label": "player1",
+                  "type": "t_address"
+                },
+                {
+                  "label": "player2",
+                  "type": "t_address"
+                },
+                {
+                  "label": "wager",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(GameStatus)259"
+                },
+                {
+                  "label": "result",
+                  "type": "t_enum(Result)264"
+                },
+                {
+                  "label": "lastMoveTime",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "createdAt",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "winner",
+                  "type": "t_address"
+                }
+              ]
+            },
+            "t_enum(GameStatus)259": {
+              "label": "enum ChessWagerEscrow.GameStatus",
+              "members": [
+                "Waiting",
+                "Ongoing",
+                "Finished",
+                "Disputed"
+              ]
+            },
+            "t_enum(Result)264": {
+              "label": "enum ChessWagerEscrow.Result",
+              "members": [
+                "None",
+                "Player1Win",
+                "Player2Win",
+                "Draw"
+              ]
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "Ownable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard": {
+        "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:25",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ReentrancyGuard",
+            "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:47"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ReentrancyGuard",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/ChessWagerEscrow.sol:ChessWagerEscrow": {
+        "src": "contracts\\ChessWagerEscrow.sol:9",
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context",
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address,address)",
+          "createGame(address)",
+          "joinGame(uint256)",
+          "reportResult(uint256,uint8)",
+          "raiseDispute(uint256)",
+          "resolveDispute(uint256,uint8)",
+          "claimTimeout(uint256)",
+          "refundUnjoinedGame(uint256)",
+          "updateArbitrator(address)",
+          "emergencyWithdraw(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ChessWagerEscrow",
+            "src": "contracts\\ChessWagerEscrow.sol:45"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "gameIdCounter",
+              "type": "t_uint256",
+              "src": "contracts\\ChessWagerEscrow.sol:25"
+            },
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "arbitrator",
+              "type": "t_address",
+              "src": "contracts\\ChessWagerEscrow.sol:26"
+            },
+            {
+              "contract": "ChessWagerEscrow",
+              "label": "games",
+              "type": "t_mapping(t_uint256,t_struct(Game)283_storage)",
+              "src": "contracts\\ChessWagerEscrow.sol:27"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_uint256,t_struct(Game)283_storage)": {
+              "label": "mapping(uint256 => struct ChessWagerEscrow.Game)"
+            },
+            "t_struct(Game)283_storage": {
+              "label": "struct ChessWagerEscrow.Game",
+              "members": [
+                {
+                  "label": "player1",
+                  "type": "t_address"
+                },
+                {
+                  "label": "player2",
+                  "type": "t_address"
+                },
+                {
+                  "label": "wager",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(GameStatus)259"
+                },
+                {
+                  "label": "result",
+                  "type": "t_enum(Result)264"
+                },
+                {
+                  "label": "lastMoveTime",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "createdAt",
+                  "type": "t_uint256"
+                },
+                {
+                  "label": "winner",
+                  "type": "t_address"
+                }
+              ]
+            },
+            "t_enum(GameStatus)259": {
+              "label": "enum ChessWagerEscrow.GameStatus",
+              "members": [
+                "Waiting",
+                "Ongoing",
+                "Finished",
+                "Disputed"
+              ]
+            },
+            "t_enum(Result)264": {
+              "label": "enum ChessWagerEscrow.Result",
+              "members": [
+                "None",
+                "Player1Win",
+                "Player2Win",
+                "Draw"
+              ]
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    }
+  ]
+}
