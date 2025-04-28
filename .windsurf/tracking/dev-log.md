@@ -15,3 +15,9 @@
 - Supabase project `chexfun-db` created ($10/mo, real-time, healthy). Tables: `games`, `moves` for persistent and real-time chess state.
 - Next Steps: Integrate multiplayer logic (socket.io), add time control, build lobby/invite flow, polish UI for streamer mode.
 - Task ID: T001 (core gameplay)
+
+## 2024-06-09
+- Focus: ChessWagerEscrow artifact integration for frontend
+- Context: Copied ChessWagerEscrow.json from contracts/artifacts-zk to src/artifacts. Updated import in src/app/core/escrow.ts to use new path. Ensured ABI matches deployed contract for frontend.
+- Next Steps: Test build and redeploy to Vercel.
+- Task ID: T00X (artifact integration)

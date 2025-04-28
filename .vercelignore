@@ -1,0 +1,11 @@
+backend/
+contracts/
+test/
+cache/
+chess.sol
+contracts.zip
+public.zip
+supabase_schema.sql
+README.md
+README_viem.txt
+requirements.txt

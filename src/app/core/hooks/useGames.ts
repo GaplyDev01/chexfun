@@ -56,10 +56,42 @@ export function useGames(filters: { status?: string; minRating?: number; maxRati
       setGames(prev => prev.map(g => g.id === gameId.toString() ? { ...g, status: "finished" } : g));
     }
 
-    contract.on("GameCreated", handleGameCreated);
-    contract.on("GameFinished", handleGameFinished);
+    // Error-resilient event registration helper
+    function resilientOn(event: string, handler: (...args: any[]) => void) {
+      let errorCount = 0;
+      const wrapped = (...args: any[]) => {
+        try {
+          handler(...args);
+        } catch (err: any) {
+          errorCount++;
+          // Detect filter error or ethers.js UNKNOWN_ERROR and re-register
+          const message = err?.message || String(err);
+          if (message.includes("Filter not found") || message.includes("UNKNOWN_ERROR")) {
+            if (errorCount < 3) {
+              console.warn(`[eth_getFilterChanges] Filter not found or unknown error for event '${event}', re-registering listener`);
+              contract.off(event, wrapped);
+              contract.on(event, wrapped);
+            } else {
+              console.error(`[eth_getFilterChanges] Suppressing repeated filter errors for event '${event}' after 3 attempts.`);
+            }
+          } else {
+            console.error(`[eth_getFilterChanges] Unhandled error in event '${event}':`, err);
+            throw err;
+          }
+        }
+      };
+      contract.on(event, wrapped);
+      return () => contract.off(event, wrapped);
+    }
 
-    // --- Additional event listeners for richer UX ---
+    // Register listeners with error handling
+    const cleanups = [
+      resilientOn("GameCreated", handleGameCreated),
+      resilientOn("GameFinished", handleGameFinished),
+      resilientOn("GameJoined", handleGameJoined),
+      resilientOn("DisputeRaised", handleDisputeRaised),
+    ];
+
     async function handleGameJoined(gameId: ethers.BigNumberish, player2: string) {
       setGames(prev => prev.map(g => g.id === gameId.toString() ? { ...g, black_player: player2, status: "active" } : g));
       // Persist to Supabase
@@ -72,14 +104,8 @@ export function useGames(filters: { status?: string; minRating?: number; maxRati
       await supabase.from("games").update({ status: "dispute" }).eq("id", gameId.toString());
     }
 
-    contract.on("GameJoined", handleGameJoined);
-    contract.on("DisputeRaised", handleDisputeRaised);
-
     return () => {
-      contract.off("GameCreated", handleGameCreated);
-      contract.off("GameFinished", handleGameFinished);
-      contract.off("GameJoined", handleGameJoined);
-      contract.off("DisputeRaised", handleDisputeRaised);
+      cleanups.forEach(fn => fn());
     };
   }, [filters.status, filters.minRating, filters.maxRating, filters.wager, userId]);
 

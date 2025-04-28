@@ -58,6 +58,19 @@ export default function ChessGameBoard() {
   const [captureAnim, setCaptureAnim] = useState(false);
 
   useEffect(() => {
+    // Prompt wallet connect on mount if not connected
+    if (status !== "connected") {
+      // Abstract wallet auto-connect if possible, else prompt
+      if (window && (window as any).AbstractWalletConnect) {
+        (window as any).AbstractWalletConnect();
+      } else {
+        console.debug("Wallet not connected. Prompting user to connect wallet.");
+        // Optionally, show a modal or UI prompt here
+      }
+    }
+  }, [status]);
+
+  useEffect(() => {
     const id = getGameIdFromUrl();
     setGameId(id);
     if (!id) {
@@ -70,10 +83,8 @@ export default function ChessGameBoard() {
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  
+    // --- DEBUG: Listener setup ---
+    console.debug('[LIVE] Setting up Supabase real-time listeners for moves and games', { id });
     // Fetch moves and reconstruct game
     async function fetchGame() {
       const { data: moves, error: movesError } = await supabase
@@ -85,14 +96,10 @@ export default function ChessGameBoard() {
         return;
       }
       const chess = new Chess();
-      console.log('[DEBUG] Replaying moves:', moves);
       for (const m of moves || []) {
-        const beforeFen = chess.fen();
-        const moveResult = chess.move(m.move);
-        console.log(`[DEBUG] Move: ${m.move}, FEN before: ${beforeFen}, FEN after: ${chess.fen()}, Move result:`, moveResult);
+        chess.move(m.move);
       }
       setGame(chess);
-      console.log('[DEBUG] Final FEN after replay:', chess.fen());
     }
     async function fetchPlayers() {
       const { data: games, error: gameError } = await supabase
@@ -103,8 +110,6 @@ export default function ChessGameBoard() {
       if (!gameError && games) {
         setBlackPlayer(games.black_player || null);
         setGameStatus(games.status);
-        // Ready state logic
-        console.log('[DEBUG] fetchPlayers:', games);
         if (address && games.white_player === address) {
           setReady(!!games.ready_white);
           setOpponentReady(!!games.ready_black);
@@ -116,7 +121,6 @@ export default function ChessGameBoard() {
     }
     fetchGame();
     fetchPlayers();
-    // Real-time subscription
     const sub = supabase
       .channel('public:moves')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'moves', filter: `game_id=eq.${id}` }, payload => {
@@ -125,12 +129,13 @@ export default function ChessGameBoard() {
             const chess = new Chess(prev.fen());
             chess.move(payload.new.move);
             setActiveColor(chess.turn() as 'w' | 'b');
+            // --- DEBUG: Move event received ---
+            console.debug('[LIVE] Move event received from Supabase:', payload.new.move);
             return chess;
           });
         }
       })
       .subscribe();
-    // Listen for game status changes and player joins
     const subGame = supabase
       .channel('public:games')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'games', filter: `id=eq.${id}` }, payload => {
@@ -140,7 +145,6 @@ export default function ChessGameBoard() {
         if (payload.new && payload.new.black_player) {
           setBlackPlayer(payload.new.black_player);
         }
-        // Ready state update
         if (address && payload.new.white_player === address) {
           setReady(!!payload.new.ready_white);
           setOpponentReady(!!payload.new.ready_black);
@@ -150,8 +154,8 @@ export default function ChessGameBoard() {
         }
       })
       .subscribe();
-    return () => { supabase.removeChannel(sub); supabase.removeChannel(subGame); };
-  }, [address, blackPlayer, gameStatus]);
+    return () => { window.removeEventListener('beforeunload', handleBeforeUnload); supabase.removeChannel(sub); supabase.removeChannel(subGame); };
+  }, [address, blackPlayer, gameStatus, status]);
 
   // Ready logic and color assignment
   useEffect(() => {
