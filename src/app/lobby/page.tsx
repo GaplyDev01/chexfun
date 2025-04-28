@@ -5,14 +5,7 @@ import { supabase } from "../core/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalWalletSignerAccount } from "@abstract-foundation/agw-react";
 import { usePresence } from "../core/hooks/usePresence";
-import {
-  TelegramShareButton,
-  TelegramIcon,
-  EmailShareButton,
-  EmailIcon,
-  TwitterShareButton,
-  XIcon,
-} from "react-share";
+
 import { Analytics } from "@vercel/analytics/react";
 import ThemeToggle from "../components/ThemeToggle";
 import GameList from "../components/GameList";
@@ -21,7 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import BotPlayButton from "../components/BotPlayButton";
 import { useGames } from "../core/hooks/useGames";
 
-import { User, Game } from "../core/types";
+import { User } from "../core/types";
 
 export default function Lobby() {
   const router = useRouter();
