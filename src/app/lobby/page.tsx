@@ -140,6 +140,10 @@ export default function Lobby() {
                 alert('Please connect your wallet before joining a game.');
                 return;
               }
+              if (game.white_player === address) {
+                alert('You cannot join your own game.');
+                return;
+              }
               if (!game.black_player) {
                 await supabase.from("games").update({ black_player: `guest_${Math.floor(Math.random()*10000)}`, status: "active" }).eq("id", game.id);
                 router.push(`/chessboard?gameId=${game.id}`);
